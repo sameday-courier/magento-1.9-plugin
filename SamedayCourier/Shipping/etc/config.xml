@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<config>
+
+    <modules>
+        <SamedayCourier_Shipping>
+            <version>0.1.0</version>
+        </SamedayCourier_Shipping>
+    </modules>
+
+    <global>
+        <helpers>
+            <samedaycourier_shipping>
+                <class>SamedayCourier_Shipping_Helper</class>
+            </samedaycourier_shipping>
+        </helpers>
+        <blocks>
+            <samedaycourier_shipping>
+                <class>SamedayCourier_Shipping_Block</class>
+            </samedaycourier_shipping>
+        </blocks>
+        <models>
+            <samedaycourier_shipping>
+                <class>SamedayCourier_Shipping_Model</class>
+                <resourceModel>samedaycourier_shipping_resource</resourceModel>
+            </samedaycourier_shipping>
+            <samedaycourier_shipping_resource>
+                <class>SamedayCourier_Shipping_Model_Resource</class>
+                <entities>
+                    <awb>
+                        <table>sameday_awb</table>
+                    </awb>
+                </entities>
+                <entities>
+                    <pickuppoint>
+                        <table>sameday_pickup_point</table>
+                    </pickuppoint>
+                </entities>
+                <entities>
+                    <service>
+                        <table>sameday_service</table>
+                    </service>
+                </entities>
+                <entities>
+                    <package>
+                        <table>sameday_package</table>
+                    </package>
+                </entities>
+            </samedaycourier_shipping_resource>
+        </models>
+        <resources>
+            <samedaycourier_shipping_setup>
+                <setup>
+                    <module>SamedayCourier_Shipping</module>
+                </setup>
+            </samedaycourier_shipping_setup>
+        </resources>
+    </global>
+
+    <default>
+        <carriers>
+            <samedaycourier_shipping>
+                <active>1</active>
+                <sallowspecific>1</sallowspecific>
+                <model>samedaycourier_shipping/carrier_sameday</model>
+                <name>Sameday Courier</name>
+                <price>10.00</price>
+                <title>Sameday Courier</title>
+            </samedaycourier_shipping>
+        </carriers>
+    </default>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <samedaycourier_shipping before="Mage_Adminhtml">SamedayCourier_Shipping_Adminhtml</samedaycourier_shipping>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <stores>
+        <admin>
+            <design>
+                <theme>
+                    <template>samedaycourier_shipping</template>
+                </theme>
+            </design>
+        </admin>
+    </stores>
+
+</config>
