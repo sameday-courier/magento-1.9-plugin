@@ -89,7 +89,7 @@
                 <h4 class="icon-head head-shipping-method"><?php echo Mage::helper('samedaycourier_shipping/data')->__('Sameday Courier') ?></h4>
             </div>
             <fieldset>
-                <?php if (!isset(Mage::helper('samedaycourier_shipping/data')->getShippingMethodSameday()['awb_number'])) { ?>
+                <?php $helper = Mage::helper('samedaycourier_shipping/data')->getShippingMethodSameday(); if (!isset($helper['awb_number'])) { ?>
                     <button type="button" onclick="setLocation('<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/awb/index/order_id/' . $this->getRequest()->order_id) ?>')" style="vertical-align: middle"> <?php echo Mage::helper('samedaycourier_shipping/data')->__('Generate Awb'); ?> </button>
                 <?php } else { ?>
                     <button type="button" onclick="setLocation('<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/awb/showHistory/order_id/' . $this->getRequest()->order_id) ?>')" style="vertical-align: middle"> <?php echo Mage::helper('samedaycourier_shipping/data')->__('Show Summary'); ?> </button>

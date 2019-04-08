@@ -1,6 +1,6 @@
 <?php
 
-require_once(Mage::getBaseDir('lib') . '/php-sdk/src/Sameday/autoload.php');
+require_once(Mage::getBaseDir('lib') . '/samedaycourier-php-sdk/src/Sameday/autoload.php');
 require_once(Mage::getModuleDir('controllers','Mage_Adminhtml') . DS . 'System' . DS . 'ConfigController.php');
 
 class SamedayCourier_Shipping_Adminhtml_System_ConfigController extends Mage_Adminhtml_System_ConfigController
@@ -89,6 +89,8 @@ class SamedayCourier_Shipping_Adminhtml_System_ConfigController extends Mage_Adm
         if (method_exists($this, $method)) {
             return $this->$method($groups);
         }
+
+        return;
     }
 
     /**
@@ -123,6 +125,13 @@ class SamedayCourier_Shipping_Adminhtml_System_ConfigController extends Mage_Adm
         return $groups;
     }
 
+    /**
+     * @param $user
+     * @param $password
+     * @param $is_testing
+     * @return \Sameday\SamedayClient
+     * @throws \Sameday\Exceptions\SamedaySDKException
+     */
     protected function initClient($user, $password, $is_testing)
     {
         return new \Sameday\SamedayClient(
