@@ -170,18 +170,14 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
             return $this->_redirect('adminhtml/sales_order/view/order_id/' . $order_id);
         }
 
-        header('Content-type: application/pdf');
-        header("Cache-Control: no-cache");
-        header("Pragma: no-cache");
+        $this->getResponse()->setHeader('Content-type', 'application/pdf; charset=UTF-8');
 
         $sameday = Mage::helper('samedaycourier_shipping/api')->sameday;
 
         $content = $sameday->getAwbPdf(new \Sameday\Requests\SamedayGetAwbPdfRequest($awb['awb_number'],
             new \Sameday\Objects\Types\AwbPdfType(\Sameday\Objects\Types\AwbPdfType::A4)));
 
-        echo $content->getPdf();
-
-        exit;
+        $this->getResponse()->setBody($content->getPdf());
     }
 
     public function showHistoryAction()
@@ -316,7 +312,7 @@ class SamedayCourier_Shipping_Adminhtml_AwbController extends Mage_Adminhtml_Con
                 $companyObject
             ),
             $params['insured_value'],
-            $params['grand_total'],
+            $params['ramburs'],
             new \Sameday\Objects\Types\CodCollectorType(\Sameday\Objects\Types\CodCollectorType::CLIENT),
             null,
             array(),

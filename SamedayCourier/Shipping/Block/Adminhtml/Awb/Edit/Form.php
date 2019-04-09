@@ -5,6 +5,10 @@
  */
 class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
+    /**
+     * @return Mage_Adminhtml_Block_Widget_Form
+     * @throws Mage_Core_Model_Store_Exception
+     */
     protected function _prepareForm()
     {
         Mage::helper('samedaycourier_shipping/api')->sameday;
@@ -26,8 +30,11 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
 
         $store = Mage::app()->getStore();
         $testing = Mage::getStoreConfig('carriers/samedaycourier_shipping/is_testing', $store);
+
         $pickupPointSingleton = Mage::getSingleton('samedaycourier_shipping/pickuppoint');
         $pickupPoints = $pickupPointSingleton->getPickupPoints($testing);
+
+        $order = Mage::getSingleton('sales/order')->load($this->getRequest()->order_id)->getData();
 
         $pickupPointList = array();
         foreach ($pickupPoints as $pickupPoint) {
@@ -54,7 +61,7 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
                 'label' => Mage::helper('samedaycourier_shipping/data')->__('Package weight'),
                 'title' => Mage::helper('samedaycourier_shipping/data')->__('Package weight'),
                 'style' => 'required-entry',
-                'value' => round(Mage::getSingleton('sales/order')->load($this->getRequest()->order_id)->getData()['weight'], 2),
+                'value' => round($order['weight'], 2),
                 'required' => true
             )
         );
@@ -89,6 +96,16 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
             )
         );
 
+        $fieldset->addField('ramburs', 'text', array(
+                'name' => 'ramburs',
+                'label' => Mage::helper('samedaycourier_shipping/data')->__('Ramburs'),
+                'title' => Mage::helper('samedaycourier_shipping/data')->__('Ramburs'),
+                'style' => 'required-entry',
+                'value' => round($order['grand_total'], 2),
+                'required' => true
+            )
+        );
+
         $fieldset->addField('observation', 'text', array(
                 'name' => 'observation',
                 'label' => Mage::helper('samedaycourier_shipping/data')->__('Observation'),
@@ -104,7 +121,7 @@ class SamedayCourier_Shipping_Block_Adminhtml_Awb_Edit_Form extends Mage_Adminht
                 'title' => Mage::helper('samedaycourier_shipping/data')->__('Pickup Point'),
                 'style' => '',
                 'class' => 'required-entry',
-                'value' => Mage::getSingleton('samedaycourier_shipping/pickuppoint')->getDefaultPickupPoint(),
+                'value' => $pickupPointSingleton->getDefaultPickupPoint(),
                 'options' => $pickupPointList,
                 'required' => true
             )

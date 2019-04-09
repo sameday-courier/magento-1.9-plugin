@@ -29,7 +29,7 @@ class SamedayCourier_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         $awb = Mage::getModel('samedaycourier_shipping/awb')->getAwbForOrderId($order_id);
 
-        if (isset($awb)) {
+        if (!is_null($awb)) {
             $data['awb_number'] = $awb['awb_number'];
         }
 

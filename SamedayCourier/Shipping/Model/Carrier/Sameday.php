@@ -1,12 +1,15 @@
 <?php
 
+/**
+ * Class SamedayCourier_Shipping_Model_Carrier_Sameday
+ */
 class SamedayCourier_Shipping_Model_Carrier_Sameday extends Mage_Shipping_Model_Carrier_Abstract implements Mage_Shipping_Model_Carrier_Interface
 {
     protected $_code = 'samedaycourier_shipping';
 
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
-        if ($request->getData('dest_country_id') !== 'RO') {
+        if ($request->getDestCountryId() !== 'RO') {
             return null;
         }
 
@@ -54,7 +57,7 @@ class SamedayCourier_Shipping_Model_Carrier_Sameday extends Mage_Shipping_Model_
                     break;
 
                 case 2:
-                    $working_days = unserialize($service['working_days']);
+                    $working_days = unserialize($service['working_days'],'');
                     $day = strtolower(date('l', time()));
 
                     $todayFrom = $working_days["working_days_{$day}_from"];
@@ -85,12 +88,59 @@ class SamedayCourier_Shipping_Model_Carrier_Sameday extends Mage_Shipping_Model_
 
     private function _getRate($service)
     {
+        $sameday = Mage::helper('samedaycourier_shipping/api')->sameday;
+
         $rate = Mage::getModel('shipping/rate_result_method');
 
-        $subtotal = round(Mage::getSingleton('checkout/session')->getQuote()->getTotals()['subtotal']->getData()['value'], 2);
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $shippingAddress = $quote->getShippingAddress();
+        $subtotal = round($quote->getTotals()['subtotal']['value'], 2);
+
+        $isEstimatedCostEnabled = $this->getConfigData('estimated_cost');
+
+        $pickupPointId = Mage::getModel('samedaycourier_shipping/pickuppoint')->getDefaultPickupPoint();
+
+        $estimateCostRequest = new Sameday\Requests\SamedayPostAwbEstimationRequest(
+            $pickupPointId,
+            null,
+            new Sameday\Objects\Types\PackageType(
+                0
+            ),
+            [new \Sameday\Objects\ParcelDimensionsObject($shippingAddress->getWeight())],
+            $service['sameday_id'],
+            new Sameday\Objects\Types\AwbPaymentType(
+                1
+            ),
+            new Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject(
+                $shippingAddress->getCity(),
+                $shippingAddress->getRegion(),
+                ltrim(implode(" ", $shippingAddress->getStreet())),
+                null,
+                null,
+                null,
+                null
+            ),
+            0,
+             $subtotal,
+            null,
+            array()
+        );
+
+        try {
+            $estimation = $sameday->postAwbEstimation($estimateCostRequest);
+            $estimatedCost = $estimation->getCost();
+        } catch (\Sameday\Exceptions\SamedayBadRequestException $exception) {
+            $estimatedCost = null;
+        }
+
 
         if ($service['price_free'] !== '' && $subtotal >= $service['price_free']) {
             $service['price'] = 0;
+        }
+
+        if ($isEstimatedCostEnabled && $estimatedCost !== null) {
+            $service['price'] = $estimatedCost;
         }
 
         $rate->setCarrier($this->_code);

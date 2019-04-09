@@ -61,7 +61,7 @@ class SamedayCourier_Shipping_Adminhtml_ServiceController extends Mage_Adminhtml
 
             $working_days = array();
             foreach ($postData as $key => $val) {
-                if (strpos($key, '_days_')) {
+                if (strpos($key, '_days_') !== 0) {
                     $working_days[$key] = $val;
                 }
             }
@@ -69,7 +69,7 @@ class SamedayCourier_Shipping_Adminhtml_ServiceController extends Mage_Adminhtml
             $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
             foreach ($days as $day) {
-                if ($working_days["working_days_{$day}_from"] == '1') {
+                if ($working_days["working_days_{$day}_from"] === '1') {
                     $working_days["working_days_{$day}_until"] = '1';
                 }
             }
