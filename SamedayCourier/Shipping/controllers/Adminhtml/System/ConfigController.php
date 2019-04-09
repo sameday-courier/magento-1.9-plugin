@@ -89,6 +89,8 @@ class SamedayCourier_Shipping_Adminhtml_System_ConfigController extends Mage_Adm
         if (method_exists($this, $method)) {
             return $this->$method($groups);
         }
+
+        return;
     }
 
     /**
@@ -123,6 +125,13 @@ class SamedayCourier_Shipping_Adminhtml_System_ConfigController extends Mage_Adm
         return $groups;
     }
 
+    /**
+     * @param $user
+     * @param $password
+     * @param $is_testing
+     * @return \Sameday\SamedayClient
+     * @throws \Sameday\Exceptions\SamedaySDKException
+     */
     protected function initClient($user, $password, $is_testing)
     {
         return new \Sameday\SamedayClient(
