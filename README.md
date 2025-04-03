@@ -40,7 +40,7 @@ Press "Generate Awb" complete the form and press "Save" button. Now the awb is g
 in .pdf format or delete the awb.
 
 
-For further information, contact as at software@sameday.ro !
+For further information, contact as at software@sameday.ro !!
 
 
 
